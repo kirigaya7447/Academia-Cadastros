@@ -1,10 +1,22 @@
 package Objects;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
 public class Aluno {
 
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
+	@Column(name="nome")
 	private String nome;
+	@Column(name="idade")
 	private int idade;
+	@Column(name="plano")
 	private String plano;
 
 	public Aluno(String nome, int idade, String plano) {
