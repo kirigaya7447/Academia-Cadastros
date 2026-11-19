@@ -13,7 +13,7 @@ import Objects.Personal;
 public class Main {
 	public static void main(String[] args) {
 
-		EntityManagerFactory emf = Persistence.createEntityManagerFactory("pratica04");
+		EntityManagerFactory emf = Persistence.createEntityManagerFactory("academia");
 		EntityManager em = emf.createEntityManager();
 
 		Scanner leia = new Scanner(System.in);
