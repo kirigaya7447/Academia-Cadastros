@@ -26,6 +26,8 @@ public class Main {
 		String nome, plano, dia;
 		double valor;
 		Date inicio, fim;
+		
+		
 
 		while (opcao != 0) {
 
