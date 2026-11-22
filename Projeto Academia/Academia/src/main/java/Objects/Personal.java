@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "personal")
 public class Personal {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
