@@ -9,6 +9,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
 
 @Entity
 @Table(name = "horarios")
@@ -23,6 +25,10 @@ public class Horarios {
 	private Date horaFim;
 	@Column(name="diaSemana")
 	private String diaSemana;
+	
+	@OneToOne
+	@JoinColumn(name = "id_aluno_personal")
+	private Aluno_personal aluno_personal;
 	
 	public Horarios(Date horaInicio, Date horaFim, String diaSemana) {
 		this.horaInicio = horaInicio;
@@ -72,6 +78,14 @@ public class Horarios {
 
 	public void setDiaSemana(String diaSemana) {
 		this.diaSemana = diaSemana;
+	}
+	
+	public Aluno_personal getAluno_Personal() {
+		return aluno_personal;
+	}
+
+	public void setAluno_Personal(Aluno_personal aluno_personal) {
+		this.aluno_personal = aluno_personal;
 	}
 
 }
