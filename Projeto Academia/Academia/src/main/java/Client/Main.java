@@ -11,6 +11,7 @@ import javax.persistence.Persistence;
 import javax.persistence.TemporalType;
 
 import Objects.Aluno;
+import Objects.Aluno_personal;
 import Objects.Horarios;
 import Objects.Personal;
 
@@ -22,10 +23,10 @@ public class Main {
 		Scanner leia = new Scanner(System.in);
 		SimpleDateFormat hora = new SimpleDateFormat("HH:mm");
 
-		int opcao = -1, id, idade;
+		int opcao = -1, id, idade, idPersonal, idAula;
 		String nome, plano, dia;
 		double valor;
-		Date inicio, fim;
+		String inicio, fim;
 		
 		
 
@@ -47,9 +48,15 @@ public class Main {
 			System.out.println("//---10---Editar Personal");
 			System.out.println("//---11---Listar Personais");
 			System.out.println("//---12---Apagar Personal");
+			System.out.println("\n//-------AULAS (ALUNO x PERSONAL)-------\\\\");
+			System.out.println("//---13---Cadastrar Aula");
+			System.out.println("//---14---Listar Aulas");
+			System.out.println("//---15---Apagar Aulas");
+			System.out.println("//---16---Alterar horário aula");
+			System.out.println("//---17---Listar Horarios com Aluno e Personal");
 			System.out.println("\n//---0---Sair do sistema");
 			System.out.print("Opção: ");
-			opcao = Integer.parseInt(leia.nextLine());
+			opcao = leia.nextInt();
 
 			switch (opcao) {
 
@@ -57,7 +64,7 @@ public class Main {
 				System.out.print("Nome: ");
 				nome = leia.nextLine();
 				System.out.print("Idade: ");
-				idade = Integer.parseInt(leia.nextLine());
+				idade = leia.nextInt();
 				System.out.print("Plano: ");
 				plano = leia.nextLine();
 
@@ -68,18 +75,20 @@ public class Main {
 
 			case 2:
 				System.out.print("ID do aluno: ");
-				id = Integer.parseInt(leia.nextLine());
+				id = leia.nextInt();
 				System.out.print("Novo nome: ");
 				nome = leia.nextLine();
 				System.out.print("Nova idade: ");
-				idade = Integer.parseInt(leia.nextLine());
+				idade = leia.nextInt();
 				System.out.print("Novo plano: ");
 				plano = leia.nextLine();
 
 				em.getTransaction().begin();
-				em.createQuery("update Aluno a set a.nome = :n, a.idade = :i, a.plano = :p where a.id = :id")
-						.setParameter("n", nome).setParameter("i", idade).setParameter("p", plano)
-						.setParameter("id", id).executeUpdate();
+
+				Aluno novosDadosAluno = em.find(Aluno.class, id);
+				novosDadosAluno.setNome(nome);
+				novosDadosAluno.setIdade(idade);
+				novosDadosAluno.setPlano(plano);
 				em.getTransaction().commit();
 				break;
 
@@ -93,18 +102,19 @@ public class Main {
 
 			case 4:
 				System.out.print("ID do aluno: ");
-				id = Integer.parseInt(leia.nextLine());
+				id = leia.nextInt();
 
 				em.getTransaction().begin();
-				em.createQuery("delete from Aluno a where a.id = :id").setParameter("id", id).executeUpdate();
+				Aluno deletarAluno = em.find(Aluno.class, id);
+				em.remove(deletarAluno);
 				em.getTransaction().commit();
 				break;
 
 			case 5:
 				System.out.print("Hora de início (HH:mm): ");
-				inicio = hora.parse(leia.nextLine());
+				inicio = leia.nextLine();
 				System.out.print("Hora de fim (HH:mm): ");
-				fim = hora.parse(leia.nextLine());
+				fim = leia.nextLine();
 				System.out.print("Dia da semana: ");
 				dia = leia.nextLine();
 
@@ -115,19 +125,18 @@ public class Main {
 
 			case 6:
 				System.out.print("ID do horário: ");
-				id = Integer.parseInt(leia.nextLine());
+				id = leia.nextInt();
 				System.out.print("Nova hora de início (HH:mm): ");
-				inicio = hora.parse(leia.nextLine());
+				inicio = leia.nextLine();
 				System.out.print("Nova hora de fim (HH:mm): ");
-				fim = hora.parse(leia.nextLine());
+				fim = leia.nextLine();
 				System.out.print("Novo dia da semana: ");
 				dia = leia.nextLine();
 
-				em.getTransaction().begin();
-				em.createQuery("update Horarios h set h.horaInicio = :i, h.horaFim = :f, h.diaSemana = :d where h.id = :id")
-						.setParameter("i", inicio, TemporalType.TIMESTAMP)
-						.setParameter("f", fim, TemporalType.TIMESTAMP)
-						.setParameter("d", dia).setParameter("id", id).executeUpdate();
+				Horarios novosDadosHorario = em.find(Horarios.class, id);
+				novosDadosHorario.setHoraInicio(inicio);
+				novosDadosHorario.setHoraFim(fim);
+				novosDadosHorario.setDiaSemana(dia);
 				em.getTransaction().commit();
 				break;
 
@@ -142,10 +151,11 @@ public class Main {
 
 			case 8:
 				System.out.print("ID do horário: ");
-				id = Integer.parseInt(leia.nextLine());
+				id = leia.nextInt();
 
 				em.getTransaction().begin();
-				em.createQuery("delete from Horarios h where h.id = :id").setParameter("id", id).executeUpdate();
+				Horarios deletarHorario = em.find(Horarios.class, id);
+				em.remove(deletarHorario);
 				em.getTransaction().commit();
 				break;
 
@@ -162,15 +172,16 @@ public class Main {
 
 			case 10:
 				System.out.print("ID do personal: ");
-				id = Integer.parseInt(leia.nextLine());
+				id = leia.nextInt();
 				System.out.print("Novo nome: ");
 				nome = leia.nextLine();
 				System.out.print("Novo valor da aula: ");
 				valor = Double.parseDouble(leia.nextLine());
 
 				em.getTransaction().begin();
-				em.createQuery("update Personal p set p.nome = :n, p.valorAula = :v where p.id = :id")
-						.setParameter("n", nome).setParameter("v", valor).setParameter("id", id).executeUpdate();
+				Personal novosDadosPersonal = em.find(Personal.class, id);
+				novosDadosPersonal.setNome(nome);
+				novosDadosPersonal.setValorAula(valor);
 				em.getTransaction().commit();
 				break;
 
@@ -184,11 +195,77 @@ public class Main {
 
 			case 12:
 				System.out.print("ID do personal: ");
-				id = Integer.parseInt(leia.nextLine());
+				id = leia.nextInt();
 
 				em.getTransaction().begin();
-				em.createQuery("delete from Personal p where p.id = :id").setParameter("id", id).executeUpdate();
+				Personal deletarPersonal = em.find(Personal.class, id);
+				em.remove(deletarPersonal);
 				em.getTransaction().commit();
+				break;
+
+			case 13:
+				System.out.print("ID do aluno: ");
+				id = leia.nextInt();
+				System.out.print("ID do personal: ");
+				idPersonal = leia.nextInt();
+
+				Aluno aluno = em.find(Aluno.class, id);
+				Personal personal = em.find(Personal.class, idPersonal);
+				if (aluno == null || personal == null) {
+					System.out.println("Aluno ou personal não encontrado!");
+					break;
+				}
+				em.getTransaction().begin();
+				em.persist(new Aluno_personal(aluno, personal));
+				em.getTransaction().commit();
+				break;
+
+			case 14:
+				List<Object[]> aulas = em.createQuery(
+						"select ap.id, a.nome, p.nome, p.valorAula "
+						+ "from Aluno_personal ap join ap.aluno a join ap.personal p",
+						Object[].class).getResultList();
+				for (Object[] v : aulas) {
+					System.out.println("Vínculo " + v[0] + " - Aluno: " + v[1] + " - Personal: " + v[2] + " - R$ " + v[3]);
+				}
+				break;
+
+			case 15:
+				System.out.print("ID do vínculo: ");
+				idAula = leia.nextInt();
+
+				em.getTransaction().begin();
+				Aluno_personal deletarAluno_Personal = em.find(Aluno_personal.class, idAula);
+				em.remove(deletarAluno_Personal);
+				em.getTransaction().commit();
+				break;
+
+			case 16:
+				System.out.print("ID do horário: ");
+				id = leia.nextInt();
+				System.out.print("ID do vínculo: ");
+				idAula = leia.nextInt();
+
+				Horarios h1 = em.find(Horarios.class, id);
+				Aluno_personal vinc = em.find(Aluno_personal.class, idAula);
+				if (h1 == null || vinc == null) {
+					System.out.println("Horário ou vínculo não encontrado!");
+					break;
+				}
+				em.getTransaction().begin();
+				h1.setAluno_Personal(vinc);
+				em.getTransaction().commit();
+				break;
+
+			case 17:
+				List<Object[]> agenda = em.createQuery(
+						"select h.diaSemana, h.horaInicio, h.horaFim, a.nome, p.nome "
+						+ "from Horarios h join h.aluno_personal ap join ap.aluno a join ap.personal p",
+						Object[].class).getResultList();
+				for (Object[] r : agenda) {
+					System.out.println(r[0] + " " + hora.format(r[1]) + " às " + hora.format(r[2])
+							+ " - Aluno: " + r[3] + " - Personal: " + r[4]);
+				}
 				break;
 
 			case 0:

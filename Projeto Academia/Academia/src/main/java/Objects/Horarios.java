@@ -20,9 +20,9 @@ public class Horarios {
 	private int id;
 	
 	@Column(name="horaInicio")
-	private Date horaInicio;
+	private String horaInicio;
 	@Column(name="horaFim")
-	private Date horaFim;
+	private String horaFim;
 	@Column(name="diaSemana")
 	private String diaSemana;
 	
@@ -30,7 +30,7 @@ public class Horarios {
 	@JoinColumn(name = "id_aluno_personal")
 	private Aluno_personal aluno_personal;
 	
-	public Horarios(Date horaInicio, Date horaFim, String diaSemana) {
+	public Horarios(String horaInicio, String horaFim, String diaSemana) {
 		this.horaInicio = horaInicio;
 		this.horaFim = horaFim;
 		this.diaSemana = diaSemana;
@@ -49,27 +49,16 @@ public class Horarios {
 		return sdf.format(horaInicio);
 	}
 
-	public void setHoraInicio(String horaString) {
-		try {
-		SimpleDateFormat sdf = new SimpleDateFormat();
-		this.horaInicio = sdf.parse(horaString);
-		} catch(Exception err) {
-			System.err.println("Erro: " + err);
-		}
+	public void setHoraInicio(String horaInicio) {
+		this.horaInicio = horaInicio;
 	}
 
 	public String getHoraFim() {
-		SimpleDateFormat sdf = new SimpleDateFormat();
-		return sdf.format(horaFim);
+		return horaFim;
 	}
 
-	public void setHoraFim(String horaString) {
-		try {
-			SimpleDateFormat sdf = new SimpleDateFormat();
-			this.horaFim = sdf.parse(horaString);
-			} catch(Exception err) {
-				System.err.println("Erro: " + err);
-			}
+	public void setHoraFim(String horaFim) {
+		this.horaFim = horaFim;
 	}
 
 	public String getDiaSemana() {
