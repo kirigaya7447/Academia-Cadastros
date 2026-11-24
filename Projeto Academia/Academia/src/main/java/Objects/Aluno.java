@@ -26,6 +26,10 @@ public class Aluno {
 		this.idade = idade;
 		this.plano = plano;
 	}
+	
+	public Aluno() {
+		
+	}
 
 	public int getId() {
 		return id;

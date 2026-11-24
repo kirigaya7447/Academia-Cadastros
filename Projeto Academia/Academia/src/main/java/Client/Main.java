@@ -23,12 +23,10 @@ public class Main {
 		Scanner leia = new Scanner(System.in);
 		SimpleDateFormat hora = new SimpleDateFormat("HH:mm");
 
-		int opcao = -1, id, idade, idPersonal, idAula;
+		int opcao = -1, id, idade, idPersonal, idAula, idHorario, idAluno_Personal;
 		String nome, plano, dia;
 		double valor;
 		String inicio, fim;
-		
-		
 
 		while (opcao != 0) {
 
@@ -57,6 +55,7 @@ public class Main {
 			System.out.println("\n//---0---Sair do sistema");
 			System.out.print("Opção: ");
 			opcao = leia.nextInt();
+			leia.nextLine();
 
 			switch (opcao) {
 
@@ -65,6 +64,7 @@ public class Main {
 				nome = leia.nextLine();
 				System.out.print("Idade: ");
 				idade = leia.nextInt();
+				leia.nextLine();
 				System.out.print("Plano: ");
 				plano = leia.nextLine();
 
@@ -76,10 +76,12 @@ public class Main {
 			case 2:
 				System.out.print("ID do aluno: ");
 				id = leia.nextInt();
+				leia.nextLine();
 				System.out.print("Novo nome: ");
 				nome = leia.nextLine();
 				System.out.print("Nova idade: ");
 				idade = leia.nextInt();
+				leia.nextLine();
 				System.out.print("Novo plano: ");
 				plano = leia.nextLine();
 
@@ -93,8 +95,9 @@ public class Main {
 				break;
 
 			case 3:
-				List<Object[]> alunos = em.createQuery("select a.id, a.nome, a.idade, a.plano from Aluno a",
-						Object[].class).getResultList();
+				List<Object[]> alunos = em
+						.createQuery("select a.id, a.nome, a.idade, a.plano from Aluno a", Object[].class)
+						.getResultList();
 				for (Object[] a : alunos) {
 					System.out.println(a[0] + " - " + a[1] + " - " + a[2] + " anos - " + a[3]);
 				}
@@ -103,6 +106,7 @@ public class Main {
 			case 4:
 				System.out.print("ID do aluno: ");
 				id = leia.nextInt();
+				leia.nextLine();
 
 				em.getTransaction().begin();
 				Aluno deletarAluno = em.find(Aluno.class, id);
@@ -126,6 +130,7 @@ public class Main {
 			case 6:
 				System.out.print("ID do horário: ");
 				id = leia.nextInt();
+				leia.nextLine();
 				System.out.print("Nova hora de início (HH:mm): ");
 				inicio = leia.nextLine();
 				System.out.print("Nova hora de fim (HH:mm): ");
@@ -141,17 +146,19 @@ public class Main {
 				break;
 
 			case 7:
-				List<Object[]> horarios = em.createQuery(
-						"select h.id, h.diaSemana, h.horaInicio, h.horaFim from Horarios h", Object[].class)
+				List<Object[]> horarios = em
+						.createQuery("select h.id, h.diaSemana, h.horaInicio, h.horaFim from Horarios h",
+								Object[].class)
 						.getResultList();
 				for (Object[] h : horarios) {
-					System.out.println(h[0] + " - " + h[1] + " - " + hora.format(h[2]) + " às " + hora.format(h[3]));
+					System.out.println(h[0] + " - " + h[1] + " - " + h[2] + " às " + h[3]);
 				}
 				break;
 
 			case 8:
 				System.out.print("ID do horário: ");
 				id = leia.nextInt();
+				leia.nextLine();
 
 				em.getTransaction().begin();
 				Horarios deletarHorario = em.find(Horarios.class, id);
@@ -173,6 +180,7 @@ public class Main {
 			case 10:
 				System.out.print("ID do personal: ");
 				id = leia.nextInt();
+				leia.nextLine();
 				System.out.print("Novo nome: ");
 				nome = leia.nextLine();
 				System.out.print("Novo valor da aula: ");
@@ -186,8 +194,9 @@ public class Main {
 				break;
 
 			case 11:
-				List<Object[]> personais = em.createQuery("select p.id, p.nome, p.valorAula from Personal p",
-						Object[].class).getResultList();
+				List<Object[]> personais = em
+						.createQuery("select p.id, p.nome, p.valorAula from Personal p", Object[].class)
+						.getResultList();
 				for (Object[] p : personais) {
 					System.out.println(p[0] + " - " + p[1] + " - R$ " + p[2]);
 				}
@@ -196,6 +205,7 @@ public class Main {
 			case 12:
 				System.out.print("ID do personal: ");
 				id = leia.nextInt();
+				leia.nextLine();
 
 				em.getTransaction().begin();
 				Personal deletarPersonal = em.find(Personal.class, id);
@@ -206,33 +216,45 @@ public class Main {
 			case 13:
 				System.out.print("ID do aluno: ");
 				id = leia.nextInt();
+				leia.nextLine();
 				System.out.print("ID do personal: ");
 				idPersonal = leia.nextInt();
+				leia.nextLine();
+				System.out.print("ID do horário: ");
+				idHorario = leia.nextInt();
+				leia.nextLine();
+				
 
 				Aluno aluno = em.find(Aluno.class, id);
 				Personal personal = em.find(Personal.class, idPersonal);
-				if (aluno == null || personal == null) {
-					System.out.println("Aluno ou personal não encontrado!");
+				Horarios horario = em.find(Horarios.class, idHorario);
+				if (aluno == null || personal == null || horario == null) {
+					System.out.println("Aluno, personal ou horário não encontrado!");
 					break;
 				}
 				em.getTransaction().begin();
-				em.persist(new Aluno_personal(aluno, personal));
+				Aluno_personal NewAluno =  new Aluno_personal(aluno, personal);
+				em.persist(NewAluno);
+				
+				horario.setAluno_Personal(NewAluno);
 				em.getTransaction().commit();
 				break;
 
 			case 14:
-				List<Object[]> aulas = em.createQuery(
-						"select ap.id, a.nome, p.nome, p.valorAula "
-						+ "from Aluno_personal ap join ap.aluno a join ap.personal p",
-						Object[].class).getResultList();
+				List<Object[]> aulas = em
+						.createQuery("select ap.id, a.nome, p.nome, p.valorAula "
+								+ "from Aluno_personal ap join ap.aluno a join ap.personal p", Object[].class)
+						.getResultList();
 				for (Object[] v : aulas) {
-					System.out.println("Vínculo " + v[0] + " - Aluno: " + v[1] + " - Personal: " + v[2] + " - R$ " + v[3]);
+					System.out.println(
+							"Vínculo " + v[0] + " - Aluno: " + v[1] + " - Personal: " + v[2] + " - R$ " + v[3]);
 				}
 				break;
 
 			case 15:
 				System.out.print("ID do vínculo: ");
 				idAula = leia.nextInt();
+				leia.nextLine();
 
 				em.getTransaction().begin();
 				Aluno_personal deletarAluno_Personal = em.find(Aluno_personal.class, idAula);
@@ -243,8 +265,10 @@ public class Main {
 			case 16:
 				System.out.print("ID do horário: ");
 				id = leia.nextInt();
+				leia.nextLine();
 				System.out.print("ID do vínculo: ");
 				idAula = leia.nextInt();
+				leia.nextLine();
 
 				Horarios h1 = em.find(Horarios.class, id);
 				Aluno_personal vinc = em.find(Aluno_personal.class, idAula);
@@ -260,11 +284,11 @@ public class Main {
 			case 17:
 				List<Object[]> agenda = em.createQuery(
 						"select h.diaSemana, h.horaInicio, h.horaFim, a.nome, p.nome "
-						+ "from Horarios h join h.aluno_personal ap join ap.aluno a join ap.personal p",
+								+ "from Horarios h join h.aluno_personal ap join ap.aluno a join ap.personal p",
 						Object[].class).getResultList();
 				for (Object[] r : agenda) {
-					System.out.println(r[0] + " " + hora.format(r[1]) + " às " + hora.format(r[2])
-							+ " - Aluno: " + r[3] + " - Personal: " + r[4]);
+					System.out.println(r[0] + " " + r[1] + " às " + r[2] + " - Aluno: " + r[3]
+							+ " - Personal: " + r[4]);
 				}
 				break;
 

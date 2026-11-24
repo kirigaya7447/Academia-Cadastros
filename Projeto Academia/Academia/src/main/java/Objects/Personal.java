@@ -22,6 +22,10 @@ public class Personal {
 		this.nome = nome;
 		this.valorAula = valorAula;
 	}
+	
+	public Personal() {
+		
+	}
 
 	public int getId() {
 		return id;

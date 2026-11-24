@@ -35,6 +35,10 @@ public class Horarios {
 		this.horaFim = horaFim;
 		this.diaSemana = diaSemana;
 	}
+	
+	public Horarios() {
+		
+	}
 
 	public int getId() {
 		return id;

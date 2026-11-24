@@ -27,6 +27,10 @@ public class Aluno_personal {
     	this.aluno = aluno;
     	this.personal = personal;
     }
+    
+    public Aluno_personal() {
+    	
+    }
 
 	public int getId() {
 		return id;
